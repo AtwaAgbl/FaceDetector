@@ -69,6 +69,8 @@ public class FaceData {
   private PointF mMouthBottomPosition;
   private PointF mMouthRightPosition;
 
+  // EYE
+  private float eyeRadius;
 
   public int getId() {
     return mId;
@@ -237,5 +239,16 @@ public class FaceData {
   public void setMouthRightPosition(PointF mouthRightPosition) {
     this.mMouthRightPosition = mouthRightPosition;
   }
+
+  public float getEyeRadius() {
+    return eyeRadius;
+  }
+
+  public void setEyeRadius(float eyeRadius) {
+    this.eyeRadius = eyeRadius  ;
+  }
+
+
+
 
 }

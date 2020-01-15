@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FaceSpotter-final glasses sticked with eye.iml" filepath="$PROJECT_DIR$/FaceSpotter-final glasses sticked with eye.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TheJeffDetal.iml" filepath="$PROJECT_DIR$/TheJeffDetal.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

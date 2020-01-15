@@ -37,17 +37,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.RotateDrawable;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
-import android.view.View;
 
 import com.raywenderlich.facespotter.ui.camera.GraphicOverlay;
 
@@ -60,6 +51,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
 
     private static final float DOT_RADIUS = 3.0f;
     private static final float TEXT_OFFSET_Y = -30.0f;
+
 
     private boolean mIsFrontFacing;
 
@@ -187,6 +179,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         PointF rightEyePosition = new PointF(translateX(detectLeftEyePosition.x),
                 translateY(detectLeftEyePosition.y));
 
+
         // Eye state
         boolean leftEyeOpen = faceData.isLeftEyeOpen();
         boolean rightEyeOpen = faceData.isRightEyeOpen();
@@ -217,18 +210,14 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float distance = (float) Math.sqrt(
                 (rightEyePosition.x - leftEyePosition.x) * (rightEyePosition.x - leftEyePosition.x) +
                         (rightEyePosition.y - leftEyePosition.y) * (rightEyePosition.y - leftEyePosition.y));
-        float eyeRadius = EYE_RADIUS_PROPORTION * distance;
+        float eyeRadius = (EYE_RADIUS_PROPORTION * distance);
         float irisRadius = IRIS_RADIUS_PROPORTION * distance;
 
         // Draw the eyes.
 
+        Eyes mEyes = Eyes.newInstance(leftEyePosition,rightEyePosition,eyeRadius,eulerZ);
+        drawEye(canvas,mEyes);
 
-        drawEye(canvas, leftEyePosition, rightEyePosition, eyeRadius, eulerY, eulerZ);
-
-  /*  PointF leftIrisPosition = mLeftPhysics.nextIrisPosition(leftEyePosition, eyeRadius, irisRadius);
-    drawEye(canvas, leftEyePosition, eyeRadius, leftIrisPosition, irisRadius, leftEyeOpen, smiling);
-    PointF rightIrisPosition = mRightPhysics.nextIrisPosition(rightEyePosition, eyeRadius, irisRadius);
-    drawEye(canvas, rightEyePosition, eyeRadius, rightIrisPosition, irisRadius, rightEyeOpen, smiling);*/
 
 
         // Draw the nose.
@@ -245,59 +234,21 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         }
     }
 
+    private void drawEye(Canvas canvas, Eyes mEyes) {
+
+        int selectedImgId = pref.getInt("img", R.drawable.glasses);
+        Bitmap icon = BitmapFactory.decodeResource(resources, selectedImgId);
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(mEyes.getEulerZ());
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(icon, mEyes.getWidth(), mEyes.getHeight() , true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        canvas.drawBitmap(rotatedBitmap, mEyes.getEuleredLeft(), mEyes.getEuleredTop(), null);
+    }
+
+
     // Cartoon feature draw routines
     // =============================
-
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void drawEye(Canvas canvas, PointF leftEyePosition, PointF rightEyePosition, float eyeRadius, float eulerY, float eulerZ) {
-
-
-        // Log.v("Atwa ", "Euler y = " + eulerY);
-        // Log.v("Atwa ", "Euler Z = " + eulerZ);
-        PointF highestEye, lowestEye;
-
-        // Log.v("Atwa","Left Eye = " + leftEyePosition.x);
-        //Log.v("Atwa","Right Eye = " + rightEyePosition.x);
-
-
-        int left = (int) (leftEyePosition.x - eyeRadius) - 50;
-        int right = (int) (rightEyePosition.x + eyeRadius) + 50;
-
-        double tiltFactor = eulerZ;
-
-
-        if (eulerZ > 0) {
-            int top = (int) ((leftEyePosition.y - eyeRadius - 50) - tiltFactor);
-            int bottom = (int) ((rightEyePosition.y + eyeRadius + 50) + tiltFactor);
-            int imgId = pref.getInt("img", R.drawable.glasses);
-            RectF rectf = new RectF(left, top, right, bottom);
-            Rect rect = new Rect(left, top, right, bottom);
-
-            /*mGlassesGraphic = resources.getDrawable(imgId);
-            mGlassesGraphic.setBounds(rect);
-            mGlassesGraphic.draw(canvas);*/
-
-            mGlassesGraphic = resources.getDrawable(imgId);
-            Bitmap icon = BitmapFactory.decodeResource(resources, R.drawable.glasses);
-
-
-
-            Matrix matrix = new Matrix();
-
-            matrix.postRotate(1);
-
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(icon, 1000, 1000, true);
-
-
-            Log.v("Atwa", "Left = " + left  + "   & Width = " + scaledBitmap.getWidth());
-
-          Bitmap rotatedBitmap = Bitmap.createBitmap(icon, left, top, right-left, bottom - top, matrix, true);
-            canvas.drawBitmap(rotatedBitmap,left,right,null);
-        }
-
-
-    }
 
 
 
